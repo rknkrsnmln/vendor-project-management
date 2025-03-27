@@ -17,6 +17,7 @@ import java.util.List;
 public class Vendor implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String name;
@@ -32,5 +33,10 @@ public class Vendor implements Serializable {
 
     public Integer getNumberOfProjects() {
         return this.projects.size();
+    }
+
+    public void removeAllVendors() {
+        this.projects.stream().forEach(project -> project.setOwner(null));
+        this.projects = null;
     }
 }

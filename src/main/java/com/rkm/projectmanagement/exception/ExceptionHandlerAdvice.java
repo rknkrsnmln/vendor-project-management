@@ -17,9 +17,20 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(ProjectNotFoundException.class)
+    @ExceptionHandler({ProjectNotFoundException.class, VendorNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Object> handleUser(ProjectNotFoundException e) {
+    public ResponseEntity<Object> handleUser(Exception e) {
+        return new ResponseEntity<>(ResultBaseDto.builder()
+                .flag(false)
+                .message(e.getMessage())
+                .code(HttpStatus.NOT_FOUND.value())
+                .data(null)
+                .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ObjectNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleUser(ObjectNotFoundException e) {
         return new ResponseEntity<>(ResultBaseDto.builder()
                 .flag(false)
                 .message(e.getMessage())
