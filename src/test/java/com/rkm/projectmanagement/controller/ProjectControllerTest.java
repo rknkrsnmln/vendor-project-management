@@ -4,10 +4,10 @@ package com.rkm.projectmanagement.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkm.projectmanagement.dtos.ProjectDto;
 import com.rkm.projectmanagement.entities.Project;
+import com.rkm.projectmanagement.exception.ObjectNotFoundException;
 import com.rkm.projectmanagement.exception.ProjectNotFoundException;
 import com.rkm.projectmanagement.service.ProjectService;
 import org.hamcrest.Matchers;
-import org.hibernate.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,6 +53,9 @@ class ProjectControllerTest {
     }
 
     List<Project> projects;
+
+    @Value("${api.endpoint.base-url}")
+    String baseUrl;
 
 
     @BeforeEach
@@ -111,7 +115,7 @@ class ProjectControllerTest {
         BDDMockito.given(this.projectService.findById("1250808601744904191")).willReturn(this.projects.getFirst());
 
         //When and Then
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/projects/1250808601744904191")
+        this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects/1250808601744904191")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
@@ -124,16 +128,17 @@ class ProjectControllerTest {
     @Test
     void testFindProjectByIdNotFound() throws Exception {
         //Given
-        BDDMockito.given(this.projectService.findById("1250808601744904191")).willThrow(new ProjectNotFoundException("1250808601744904191"));
+//        BDDMockito.given(this.projectService.findById("1250808601744904191")).willThrow(new ProjectNotFoundException("1250808601744904191"));
+        BDDMockito.given(this.projectService.findById("1250808601744904191")).willThrow(new ObjectNotFoundException("project", "1250808601744904191"));
 
         //When and Then
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/projects/1250808601744904191")
+        this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects/1250808601744904191")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find project with id of 1250808601744904191"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.data").doesNotExist());
 
     }
 
@@ -143,7 +148,7 @@ class ProjectControllerTest {
         BDDMockito.given(this.projectService.findAll()).willReturn(this.projects);
 
         //When and Then
-        this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/projects")
+        this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
@@ -163,7 +168,7 @@ class ProjectControllerTest {
                 "A Remembrall was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered.",
                 "ImageUrl",
                 null);
-        String json = (String) this.objectMapper.writeValueAsString(projectDto);
+        String json = this.objectMapper.writeValueAsString(projectDto);
 //        System.out.println(json);
 
 //        String json = "{\n" +
@@ -182,7 +187,7 @@ class ProjectControllerTest {
         BDDMockito.given(this.projectService.save(Mockito.any(Project.class))).willReturn(savedProject);
 
         // When and then
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/projects").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.post(this.baseUrl + "/projects").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.CREATED.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Add Success"))
@@ -218,7 +223,7 @@ class ProjectControllerTest {
         BDDMockito.given(this.projectService.update(ArgumentMatchers.eq("1250808601744904191"), Mockito.any(Project.class))).willReturn(updatedProject);
 
         // When and then
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/projects/1250808601744904191").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.put(this.baseUrl + "/projects/1250808601744904191").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Update Success"))
@@ -245,10 +250,11 @@ class ProjectControllerTest {
 //                "    \"imageUrl\": \"ImageUrl\"\n" +
 //                "}";
 
-        BDDMockito.given(this.projectService.update(ArgumentMatchers.eq("1250808601744904192"), Mockito.any(Project.class))).willThrow(new ProjectNotFoundException("1250808601744904192"));
+//        BDDMockito.given(this.projectService.update(ArgumentMatchers.eq("1250808601744904192"), Mockito.any(Project.class))).willThrow(new ProjectNotFoundException("1250808601744904192"));
+        BDDMockito.given(this.projectService.update(ArgumentMatchers.eq("1250808601744904192"), Mockito.any(Project.class))).willThrow(new ObjectNotFoundException("project", "1250808601744904192"));
 
         // When and then
-        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/projects/1250808601744904192").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.put(this.baseUrl + "/projects/1250808601744904192").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find project with id of 1250808601744904192"))
@@ -262,7 +268,7 @@ class ProjectControllerTest {
         doNothing().when(this.projectService).delete("1250808601744904191");
 
         // When and then
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Delete Success"))
@@ -272,10 +278,11 @@ class ProjectControllerTest {
     @Test
     void testDeleteProjectErrorWithNonExistentId() throws Exception {
         // Given
-        doThrow(new ProjectNotFoundException("1250808601744904191")).when(this.projectService).delete("1250808601744904191");
+//        doThrow(new ProjectNotFoundException("1250808601744904191")).when(this.projectService).delete("1250808601744904191");
+        doThrow(new ObjectNotFoundException("project", "1250808601744904191")).when(this.projectService).delete("1250808601744904191");
 
         // When and then
-        this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find project with id of 1250808601744904191"))

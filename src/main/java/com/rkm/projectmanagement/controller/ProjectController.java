@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("${api.endpoint.base-url}")
 public class ProjectController {
 
     private final ProjectService projectService;
@@ -74,7 +74,7 @@ public class ProjectController {
     }
 
     @PutMapping("/projects/{projectId}")
-    public ResponseEntity<ResultBaseDto<ProjectDto>> updateArtifact(@PathVariable String projectId, @Valid @RequestBody ProjectDto projectDto){
+    public ResponseEntity<ResultBaseDto<ProjectDto>> updateProject(@PathVariable String projectId, @Valid @RequestBody ProjectDto projectDto){
         Project update = this.projectDtoToProjectConverter.convert(projectDto);
         Project updatedArtifact = this.projectService.update(projectId, update);
         ProjectDto updatedArtifactDto = this.projectToProjectDtoConverter.convert(updatedArtifact);
@@ -87,7 +87,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/projects/{projectId}")
-    public ResponseEntity<ResultBaseDto<String>> deleteArtifact(@PathVariable String projectId){
+    public ResponseEntity<ResultBaseDto<String>> deleteProject(@PathVariable String projectId){
         this.projectService.delete(projectId);
         return new ResponseEntity<>(ResultBaseDto.<String>builder()
                 .flag(true)

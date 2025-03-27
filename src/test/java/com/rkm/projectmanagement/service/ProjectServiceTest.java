@@ -1,13 +1,12 @@
 package com.rkm.projectmanagement.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkm.projectmanagement.entities.Project;
 import com.rkm.projectmanagement.entities.Vendor;
+import com.rkm.projectmanagement.exception.ObjectNotFoundException;
 import com.rkm.projectmanagement.exception.ProjectNotFoundException;
 import com.rkm.projectmanagement.repository.ProjectRepository;
 import com.rkm.projectmanagement.utils.IdWorker;
 import org.assertj.core.api.Assertions;
-import org.hibernate.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -114,11 +113,11 @@ class ProjectServiceTest {
 
         p.setOwner(v);
 
-        BDDMockito.given(projectRepository.findById("1250808601744904192"))
+        BDDMockito.given(this.projectRepository.findById("1250808601744904192"))
                 .willReturn(Optional.of(p));
         //When
 //        Project projectReturned = projectService.findById(p.getId());
-        Project projectReturned = projectService.findById("1250808601744904192");
+        Project projectReturned = this.projectService.findById("1250808601744904192");
 
         //Then
         Assertions.assertThat(projectReturned).isEqualTo(p);
@@ -126,35 +125,37 @@ class ProjectServiceTest {
         Assertions.assertThat(projectReturned.getName()).isEqualTo(p.getName());
         Assertions.assertThat(projectReturned.getImageUrl()).isEqualTo(p.getImageUrl());
         Assertions.assertThat(projectReturned.getDescription()).isEqualTo(p.getDescription());
-        Mockito.verify(projectRepository, Mockito.times(1)).findById("1250808601744904192");
+        Mockito.verify(this.projectRepository, Mockito.times(1)).findById("1250808601744904192");
     }
 
     @Test
     void testFindByIdNotFound() {
         //Given
-        BDDMockito.given(projectRepository.findById(Mockito.any(String.class)))
+        BDDMockito.given(this.projectRepository.findById(Mockito.any(String.class)))
                 .willReturn(Optional.empty());
         //When
         Throwable thrown = Assertions.catchThrowable(() -> {
-            Project projectReturned = projectService.findById("1250808601744904192");
+//            Project projectReturned = this.projectService.findById("1250808601744904192");
+            this.projectService.findById("1250808601744904192");
         });
 
         //Then
         Assertions.assertThat(thrown)
-                .isInstanceOf(ProjectNotFoundException.class)
-                .hasMessage("Could not found project with id of 1250808601744904192");
-        Mockito.verify(projectRepository, Mockito.times(1)).findById("1250808601744904192");
+//                .isInstanceOf(ProjectNotFoundException.class)
+                .isInstanceOf(ObjectNotFoundException.class)
+                .hasMessage("Could not find project with id of 1250808601744904192");
+        Mockito.verify(this.projectRepository, Mockito.times(1)).findById("1250808601744904192");
     }
 
     @Test
     void testFindAllProjectSuccess() {
         //Given
-        BDDMockito.given(projectRepository.findAll()).willReturn(this.projects);
+        BDDMockito.given(this.projectRepository.findAll()).willReturn(this.projects);
         //When
         List<Project> actualProjects = this.projectService.findAll();
         //Then
         Assertions.assertThat(actualProjects).hasSize(this.projects.size());
-        Mockito.verify(projectRepository, Mockito.times(1)).findAll();
+        Mockito.verify(this.projectRepository, Mockito.times(1)).findAll();
     }
 
     @Test
@@ -218,7 +219,7 @@ class ProjectServiceTest {
         BDDMockito.given(this.projectRepository.findById("1250808601744904192")).willReturn(Optional.empty());
 
         // When
-        assertThrows(ProjectNotFoundException.class, () -> {
+        assertThrows(ObjectNotFoundException.class, () -> {
             this.projectService.update("1250808601744904192", update);
         });
 
@@ -251,7 +252,7 @@ class ProjectServiceTest {
         BDDMockito.given(this.projectRepository.findById("1250808601744904192")).willReturn(Optional.empty());
 
         // When
-        assertThrows(ProjectNotFoundException.class, () -> {
+        assertThrows(ObjectNotFoundException.class, () -> {
             this.projectService.delete("1250808601744904192");
         });
 
