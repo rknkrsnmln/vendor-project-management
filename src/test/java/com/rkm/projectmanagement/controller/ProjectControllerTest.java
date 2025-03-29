@@ -30,8 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+
 
 
 @AutoConfigureMockMvc
@@ -265,7 +264,7 @@ class ProjectControllerTest {
     @Test
     void testDeleteProjectSuccess() throws Exception {
         // Given
-        doNothing().when(this.projectService).delete("1250808601744904191");
+        Mockito.doNothing().when(this.projectService).delete("1250808601744904191");
 
         // When and then
         this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
@@ -279,7 +278,7 @@ class ProjectControllerTest {
     void testDeleteProjectErrorWithNonExistentId() throws Exception {
         // Given
 //        doThrow(new ProjectNotFoundException("1250808601744904191")).when(this.projectService).delete("1250808601744904191");
-        doThrow(new ObjectNotFoundException("project", "1250808601744904191")).when(this.projectService).delete("1250808601744904191");
+        Mockito.doThrow(new ObjectNotFoundException("project", "1250808601744904191")).when(this.projectService).delete("1250808601744904191");
 
         // When and then
         this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))

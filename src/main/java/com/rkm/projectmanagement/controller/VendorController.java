@@ -97,4 +97,15 @@ public class VendorController {
                 .code(HttpStatus.OK.value())
                 .build(), HttpStatus.OK);
     }
+
+    @PutMapping("/vendors/{vendorId}/projects/{projectId}")
+    public ResponseEntity<ResultBaseDto<String>> assignProject(@PathVariable Integer vendorId, @PathVariable String projectId) {
+        this.vendorService.assignProject(vendorId, projectId);
+        return new ResponseEntity<>(ResultBaseDto.<String>builder()
+                .flag(true)
+                .message("Project Assignment Success")
+                .data("Assignment Project of id " + projectId + " to Vendor with id of " + vendorId + " done successfully")
+                .code(HttpStatus.OK.value())
+                .build(), HttpStatus.OK);
+    }
 }
