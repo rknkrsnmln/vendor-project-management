@@ -29,8 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -235,7 +234,7 @@ class VendorControllerTest {
     @Test
     void deleteVendorSuccess() throws Exception {
         // Given
-        doNothing().when(this.vendorService).delete(5);
+        Mockito.doNothing().when(this.vendorService).delete(5);
 
         // When and then
         this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/vendors/5").accept(MediaType.APPLICATION_JSON))
@@ -249,13 +248,52 @@ class VendorControllerTest {
     void deleteVendorErrorWithNonExistentId() throws Exception {
         // Given
 //        doThrow(new VendorNotFoundException(5)).when(this.vendorService).delete(5);
-        doThrow(new ObjectNotFoundException("vendor", 5)).when(this.vendorService).delete(5);
+        Mockito.doThrow(new ObjectNotFoundException("vendor", 5)).when(this.vendorService).delete(5);
 
         // When and then
         this.mockMvc.perform(MockMvcRequestBuilders.delete(this.baseUrl + "/vendors/5").accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find vendor with id of 5"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void testAssignProjectSuccess() throws Exception {
+        // Given
+        Mockito.doNothing().when(this.vendorService).assignProject(2, "1250808601744904191");
+
+        // When and then
+        this.mockMvc.perform(MockMvcRequestBuilders.put(this.baseUrl + "/vendors/2/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Project Assignment Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").value("Assignment Project of id 1250808601744904191 to Vendor with id of 2 done successfully"));
+    }
+
+    @Test
+    void testAssignArtifactErrorWithNonExistentWizardId() throws Exception {
+        // Given
+        Mockito.doThrow(new ObjectNotFoundException("vendor", 5)).when(this.vendorService).assignProject(5, "1250808601744904191");
+
+        // When and then
+        this.mockMvc.perform(MockMvcRequestBuilders.put(this.baseUrl + "/vendors/5/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find vendor with id of 5"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void testAssignArtifactErrorWithNonExistentArtifactId() throws Exception {
+        // Given
+        Mockito.doThrow(new ObjectNotFoundException("project", "1250808601744904199")).when(this.vendorService).assignProject(2, "1250808601744904199");
+
+        // When and then
+        this.mockMvc.perform(MockMvcRequestBuilders.put(this.baseUrl + "/vendors/2/projects/1250808601744904199").accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Could not find project with id of 1250808601744904199"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty());
     }
 }

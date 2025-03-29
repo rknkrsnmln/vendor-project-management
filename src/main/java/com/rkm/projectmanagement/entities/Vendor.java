@@ -39,4 +39,11 @@ public class Vendor implements Serializable {
         this.projects.stream().forEach(project -> project.setOwner(null));
         this.projects = null;
     }
+
+    public void removeProject(Project projectToBeAssigned) {
+        // Remove artifact owner.
+        projectToBeAssigned.setOwner(null);
+        this.projects.remove(projectToBeAssigned);
+    }
+
 }
