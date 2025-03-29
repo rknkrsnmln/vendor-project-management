@@ -1,8 +1,10 @@
 package com.rkm.projectmanagement.system;
 
 import com.rkm.projectmanagement.entities.Project;
+import com.rkm.projectmanagement.entities.User;
 import com.rkm.projectmanagement.entities.Vendor;
 import com.rkm.projectmanagement.repository.ProjectRepository;
+import com.rkm.projectmanagement.repository.UserRepository;
 import com.rkm.projectmanagement.repository.VendorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,13 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final VendorRepository vendorRepository;
 
+    private final UserRepository userRepository;
 
-    public DBDataInitializer(ProjectRepository projectRepository, VendorRepository vendorRepository) {
+
+    public DBDataInitializer(ProjectRepository projectRepository, VendorRepository vendorRepository, UserRepository userRepository) {
         this.projectRepository = projectRepository;
         this.vendorRepository = vendorRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -89,6 +94,32 @@ public class DBDataInitializer implements CommandLineRunner {
         vendorRepository.save(w3);
 
         projectRepository.save(a1);
+
+        // Create some users.
+        User u1 = new User();
+        u1.setId(1);
+        u1.setUsername("john");
+        u1.setPassword("123456");
+        u1.setEnabled(true);
+        u1.setRoles("admin user");
+
+        User u2 = new User();
+        u2.setId(2);
+        u2.setUsername("eric");
+        u2.setPassword("654321");
+        u2.setEnabled(true);
+        u2.setRoles("user");
+
+        User u3 = new User();
+        u3.setId(3);
+        u3.setUsername("tom");
+        u3.setPassword("qwerty");
+        u3.setEnabled(false);
+        u3.setRoles("user");
+
+        this.userRepository.save(u1);
+        this.userRepository.save(u2);
+        this.userRepository.save(u3);
 
 
     }
