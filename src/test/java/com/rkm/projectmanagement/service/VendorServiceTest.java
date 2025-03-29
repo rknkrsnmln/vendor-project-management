@@ -3,7 +3,6 @@ package com.rkm.projectmanagement.service;
 import com.rkm.projectmanagement.entities.Project;
 import com.rkm.projectmanagement.entities.Vendor;
 import com.rkm.projectmanagement.exception.ObjectNotFoundException;
-import com.rkm.projectmanagement.exception.VendorNotFoundException;
 import com.rkm.projectmanagement.repository.ProjectRepository;
 import com.rkm.projectmanagement.repository.VendorRepository;
 import org.assertj.core.api.Assertions;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 class VendorServiceTest {
@@ -177,7 +175,7 @@ class VendorServiceTest {
         wizard.setName("House of Armor");
 
         BDDMockito.given(this.vendorRepository.findById(1)).willReturn(Optional.of(wizard));
-        doNothing().when(this.vendorRepository).deleteById(1);
+        Mockito.doNothing().when(this.vendorRepository).deleteById(1);
 
         // When
         this.vendorService.delete(1);
