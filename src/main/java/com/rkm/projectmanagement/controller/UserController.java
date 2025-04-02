@@ -102,7 +102,7 @@ public class UserController {
                 .flag(true)
                 .message("Deleting Success")
                 .code(HttpStatus.OK.value())
-                .data("Delete user with id of " + userId + "is successful")
+                .data("Delete user with id of " + userId + " is successful")
                 .build(), HttpStatus.OK);
     }
 }

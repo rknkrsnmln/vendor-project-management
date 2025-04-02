@@ -6,6 +6,7 @@ import com.rkm.projectmanagement.entities.Vendor;
 import com.rkm.projectmanagement.repository.ProjectRepository;
 import com.rkm.projectmanagement.repository.UserRepository;
 import com.rkm.projectmanagement.repository.VendorRepository;
+import com.rkm.projectmanagement.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +18,13 @@ public class DBDataInitializer implements CommandLineRunner {
 
     private final VendorRepository vendorRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
 
-    public DBDataInitializer(ProjectRepository projectRepository, VendorRepository vendorRepository, UserRepository userRepository) {
+    public DBDataInitializer(ProjectRepository projectRepository, VendorRepository vendorRepository, UserService userService) {
         this.projectRepository = projectRepository;
         this.vendorRepository = vendorRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -117,9 +118,9 @@ public class DBDataInitializer implements CommandLineRunner {
         u3.setEnabled(false);
         u3.setRoles("user");
 
-        this.userRepository.save(u1);
-        this.userRepository.save(u2);
-        this.userRepository.save(u3);
+        this.userService.save(u1);
+        this.userService.save(u2);
+        this.userService.save(u3);
 
 
     }

@@ -31,7 +31,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
 class VendorControllerTest {
 
