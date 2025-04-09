@@ -7,6 +7,8 @@ import com.rkm.projectmanagement.repository.ProjectRepository;
 import com.rkm.projectmanagement.utils.IdWorker;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,10 @@ public class ProjectService {
 
     public List<Project> findAll() {
         return this.projectRepository.findAll();
+    }
+
+    public Page<Project> findAll(Pageable pageable) {
+        return this.projectRepository.findAll(pageable);
     }
 
     public Project save(Project newProject) {

@@ -64,6 +64,17 @@ public class ProjectControllerIntegrationTest {
     }
 
     @Test
+    @DisplayName("Check findAllArtifacts (GET)")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void testFindAllPagedProjectsSuccess() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects/paged").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Finding All Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content", Matchers.hasSize(6)));
+    }
+
+    @Test
     @DisplayName("Check findArtifactById (GET)")
     void testFindProjectByIdSuccess() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects/1250808601744904191").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))

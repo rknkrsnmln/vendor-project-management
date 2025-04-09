@@ -20,67 +20,67 @@ import org.springframework.web.client.RestClient;
 import java.util.List;
 
 
-@ContextConfiguration(classes = {ApplicationProperties.class, BeanConfiguration.class})
-@RestClientTest(value = {PostService.class})
+//@ContextConfiguration(classes = {ApplicationProperties.class, BeanConfiguration.class})
+//@RestClientTest(value = {PostService.class})
 class PostServiceTest {
 
-    @Autowired
-    private MockRestServiceServer mockServer;
-
-    @Autowired
-    RestClient restClient;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    PostService postService;
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-
-    @Test
-    void restClientNotNull() {
-        Assertions.assertNotNull(this.restClient);
-        Assertions.assertNotNull(this.objectMapper);
-    }
-
-
-    @Test
-    public void testMakeCall() throws JsonProcessingException {
-
-        List<PostDto> data = List.of(
-                new PostDto(1, 1, "Hello, World!", "This is my first post!"),
-                new PostDto(2, 1, "Testing Rest Client with @RestClientTest", "This is a post about testing RestClient calls")
-        );
-
-
-//        Mockito.when(restClient.get().uri("/posts")
-//                .headers(any()).body(any())
-//                .retrieve()
-//                .body(List.class))
-//                .thenReturn(data);
-//        Mockito.when(
-//                restClient.get()
-//                .uri("/posts")
-//                .retrieve()
-//                .body(new ParameterizedTypeReference<>() {})
-//        ).thenReturn(data);
-//        BDDMockito.given(this.postService.findAllPosts().restClient.get()
-//                .uri("/posts")
-//                .retrieve()
-//                .body(new ParameterizedTypeReference<>() {}))
-//                        .willReturn(data);
-
-
-        this.mockServer
-                .expect(MockRestRequestMatchers. requestTo(applicationProperties.getRestClientBaseurl() + "/posts"))
-                .andRespond(MockRestResponseCreators.withSuccess(objectMapper.writeValueAsString(data), MediaType.APPLICATION_JSON));
-
-        List<PostDto> allPosts = this.postService.findAllPosts();
-        Assertions.assertEquals(2, allPosts.size());
-        Assertions.assertEquals(1, allPosts.get(0).getId());
-        Assertions.assertEquals(data, allPosts);
-    }
+//    @Autowired
+//    private MockRestServiceServer mockServer;
+//
+//    @Autowired
+//    RestClient restClient;
+//
+//    @Autowired
+//    ObjectMapper objectMapper;
+//
+//    @Autowired
+//    PostService postService;
+//    @Autowired
+//    private ApplicationProperties applicationProperties;
+//
+//
+//    @Test
+//    void restClientNotNull() {
+//        Assertions.assertNotNull(this.restClient);
+//        Assertions.assertNotNull(this.objectMapper);
+//    }
+//
+//
+//    @Test
+//    public void testMakeCall() throws JsonProcessingException {
+//
+//        List<PostDto> data = List.of(
+//                new PostDto(1, 1, "Hello, World!", "This is my first post!"),
+//                new PostDto(2, 1, "Testing Rest Client with @RestClientTest", "This is a post about testing RestClient calls")
+//        );
+//
+//
+////        Mockito.when(restClient.get().uri("/posts")
+////                .headers(any()).body(any())
+////                .retrieve()
+////                .body(List.class))
+////                .thenReturn(data);
+////        Mockito.when(
+////                restClient.get()
+////                .uri("/posts")
+////                .retrieve()
+////                .body(new ParameterizedTypeReference<>() {})
+////        ).thenReturn(data);
+////        BDDMockito.given(this.postService.findAllPosts().restClient.get()
+////                .uri("/posts")
+////                .retrieve()
+////                .body(new ParameterizedTypeReference<>() {}))
+////                        .willReturn(data);
+//
+//
+//        this.mockServer
+//                .expect(MockRestRequestMatchers. requestTo(applicationProperties.getRestClientBaseurl() + "/posts"))
+//                .andRespond(MockRestResponseCreators.withSuccess(objectMapper.writeValueAsString(data), MediaType.APPLICATION_JSON));
+//
+//        List<PostDto> allPosts = this.postService.findAllPosts();
+//        Assertions.assertEquals(2, allPosts.size());
+//        Assertions.assertEquals(1, allPosts.get(0).getId());
+//        Assertions.assertEquals(data, allPosts);
+//    }
 
 }

@@ -49,7 +49,7 @@ public class VendorControllerIntegrationTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         JSONObject json = new JSONObject(contentAsString);
         this.token = "Bearer " + json.getJSONObject("data").getString("token"); // Add "Bearer " as prefix.
-        System.out.println("this is toke " + this.token);
+        System.out.println("this is the token " + this.token);
     }
 
 
@@ -94,7 +94,7 @@ public class VendorControllerIntegrationTest {
 
         String json = this.objectMapper.writeValueAsString(a);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.post(this.baseUrl + "/vendors").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
+        this.mockMvc.perform(MockMvcRequestBuilders.post(this.baseUrl +"/vendors").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.CREATED.value()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Add Success"))
