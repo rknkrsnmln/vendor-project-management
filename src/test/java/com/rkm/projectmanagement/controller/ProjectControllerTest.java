@@ -19,12 +19,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +162,30 @@ class ProjectControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[0].name").value("Deluminator"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].id").value("1250808601744904192"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[1].name").value("Invisibility Cloak"));
+    }
+
+    @Test
+    void testFindAllPagedProjectsSuccess() throws Exception {
+        //Given
+        Pageable pageable = PageRequest.of(0, 20);
+        PageImpl<Project> projectPage = new PageImpl<>(this.projects, pageable, this.projects.size());
+        BDDMockito.given(this.projectService.findAll(Mockito.any(Pageable.class))).willReturn(projectPage);
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page", "0");
+        requestParams.add("size", "20");
+
+        //When and Then
+        this.mockMvc.perform(MockMvcRequestBuilders.get(this.baseUrl + "/projects/paged")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .params(requestParams))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.flag").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Finding All Success"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content", Matchers.hasSize(this.projects.size())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].id").value("1250808601744904191"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].name").value("Deluminator"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].id").value("1250808601744904192"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[1].name").value("Invisibility Cloak"));
     }
 
     @Test

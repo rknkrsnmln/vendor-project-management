@@ -1,14 +1,19 @@
 package com.rkm.projectmanagement.controller;
 
 import com.rkm.projectmanagement.dtos.CommentDto;
+import com.rkm.projectmanagement.dtos.PaginationDto;
 import com.rkm.projectmanagement.dtos.PostDto;
 import com.rkm.projectmanagement.dtos.ResultBaseDto;
 import com.rkm.projectmanagement.service.PostService;
 import com.rkm.projectmanagement.service.PostServiceInterface;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,6 +39,24 @@ public class PostController {
                 .message("Success getting all posts")
                 .data(postService.findAllPosts())
                 .build(), HttpStatus.OK);
+    }
+
+    @GetMapping("/posts/paged")
+    public ResponseEntity<ResultBaseDto<Page<PostDto>>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<PostDto> allPosts = postService.findAllPosts(page, size);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Page-Number", String.valueOf(allPosts.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(allPosts.getSize()));
+//        return  ResponseEntity.ok()
+//                .headers(headers)
+//                .body(allPosts);
+        return new ResponseEntity<>(ResultBaseDto.<Page<PostDto>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Success getting all posts")
+                .data(allPosts)
+                .build(), headers, HttpStatus.OK);
     }
 
     @PostMapping("/posts")

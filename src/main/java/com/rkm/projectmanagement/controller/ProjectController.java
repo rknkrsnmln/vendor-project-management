@@ -8,6 +8,8 @@ import com.rkm.projectmanagement.system.converter.ProjectDtoToProjectConverter;
 import com.rkm.projectmanagement.system.converter.ProjectToProjectDtoConverter;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Null;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,8 +48,21 @@ public class ProjectController {
                 .build(), HttpStatus.OK);
     }
 
+    @GetMapping("/projects/paged")
+    public ResponseEntity<ResultBaseDto<Page<ProjectDto>>> findAllProjects(Pageable pageable) {
+        Page<Project> projectPage = this.projectService.findAll(pageable);
+        Page<ProjectDto> projectDtosPage = projectPage
+                .map(projectDto -> this.projectToProjectDtoConverter.convert(projectDto));
+        return new ResponseEntity<>(ResultBaseDto.<Page<ProjectDto>>builder()
+                .flag(true)
+                .message("Finding All Success")
+                .code(HttpStatus.OK.value())
+                .data(projectDtosPage)
+                .build(), HttpStatus.OK);
+    }
+
     @GetMapping("/projects")
-    public ResponseEntity<ResultBaseDto<List<ProjectDto>>> findAllProjects() {
+    public ResponseEntity<ResultBaseDto<List<ProjectDto>>> findAllProjects( ) {
         List<Project> projectFound = this.projectService.findAll();
         List<ProjectDto> projectDtos = projectFound.stream()
                 .map(projectDto -> this.projectToProjectDtoConverter.convert(projectDto))
