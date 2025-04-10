@@ -1,4 +1,4 @@
-package com.rkm.projectmanagement.repository;
+package com.rkm.projectmanagement.client.post;
 
 import com.rkm.projectmanagement.entities.Post;
 import org.springframework.data.jpa.repository.JpaRepository;

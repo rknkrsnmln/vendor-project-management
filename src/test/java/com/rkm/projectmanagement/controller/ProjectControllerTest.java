@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rkm.projectmanagement.dtos.ProjectDto;
 import com.rkm.projectmanagement.entities.Project;
 import com.rkm.projectmanagement.exception.ObjectNotFoundException;
-import com.rkm.projectmanagement.exception.ProjectNotFoundException;
 import com.rkm.projectmanagement.service.ProjectService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;

@@ -1,6 +1,6 @@
-package com.rkm.projectmanagement.service;
+package com.rkm.projectmanagement.client.post;
 
-import com.rkm.projectmanagement.dtos.PostDto;
+import com.rkm.projectmanagement.client.post.dto.PostDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

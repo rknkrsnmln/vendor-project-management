@@ -1,19 +1,14 @@
-package com.rkm.projectmanagement.controller;
+package com.rkm.projectmanagement.client.post;
 
-import com.rkm.projectmanagement.dtos.CommentDto;
-import com.rkm.projectmanagement.dtos.PaginationDto;
-import com.rkm.projectmanagement.dtos.PostDto;
+import com.rkm.projectmanagement.client.post.dto.CommentDto;
+import com.rkm.projectmanagement.client.post.dto.PostDto;
 import com.rkm.projectmanagement.dtos.ResultBaseDto;
-import com.rkm.projectmanagement.service.PostService;
-import com.rkm.projectmanagement.service.PostServiceInterface;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -69,6 +64,12 @@ public class PostController {
                 .build(), HttpStatus.CREATED);
     }
 
+    @PostMapping("/posts/{postId}")
+    public ResponseEntity<PostDto> addPostById(@RequestBody PostDto postDto, @PathVariable(name = "postId") Integer postId) {
+        PostDto postDtoReturned = postService.addPostById(postId, postDto.getId());
+        return new ResponseEntity<>(postDtoReturned, HttpStatus.OK);
+    }
+
     @GetMapping("/comments")
     public ResponseEntity<ResultBaseDto<List<CommentDto>>> findCommentsById(@RequestParam(name = "id") Integer postId) {
         return new ResponseEntity<>(ResultBaseDto.<List<CommentDto>>builder()
@@ -83,12 +84,6 @@ public class PostController {
         PostDto postDtoReturned = postService.findById(postId);
         return new ResponseEntity<>(postDtoReturned, HttpStatus.OK);
     }
-
-//    @PostMapping("/posts")
-//    public ResponseEntity<PostDto> addPostById(@RequestBody PostDto postDto)  {
-//        PostDto postDtoReturned = postService.addPostById(postDto.getId());
-//        return new ResponseEntity<>(postDtoReturned, HttpStatus.OK);
-//    }
 
     @PutMapping("/posts")
     public ResponseEntity<PostDto> updatePost(

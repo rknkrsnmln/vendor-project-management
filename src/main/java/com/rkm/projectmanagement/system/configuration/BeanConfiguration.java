@@ -1,7 +1,7 @@
 package com.rkm.projectmanagement.system.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rkm.projectmanagement.service.PostServiceInterface;
+import com.rkm.projectmanagement.client.post.PostServiceInterface;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +13,12 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class BeanConfiguration {
 
 
-    @Bean
-    public RestClient restClient(RestClient.Builder clientBuilder, ApplicationProperties applicationProperties) {
-        return clientBuilder
-                .baseUrl(applicationProperties.getRestClientBaseurl())
-                .build();
-    }
+//    @Bean
+//    public RestClient restClient(RestClient.Builder clientBuilder, ApplicationProperties applicationProperties) {
+//        return clientBuilder
+//                .baseUrl(applicationProperties.getRestClientBaseurl())
+//                .build();
+//    }
 
     @Bean
     PostServiceInterface postServiceInterface(ApplicationProperties applicationProperties) {
